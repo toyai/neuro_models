@@ -1,0 +1,24 @@
+# .ps_project/config.yaml:
+
+version: 2
+
+workflows:
+    efficientnets:
+    steps:
+        -
+        name: "1 batch run"
+        command: experiment.run_single_node
+        params:
+            command: python -m model.efficientnets.run pl.max_epochs=1 +pl.limit_train_batches=1 +pl.limit_val_batches=1 +pl.limit_test_batches=1
+            container: ydcjeff/dl-ci
+            experimentEnv:
+            EPOCHS_EVAL: 1
+            EVAL_SECS: 10
+            MAX_STEPS: 1
+            TRAIN_EPOCHS: 1
+            machineType: P5000
+            modelType: PyTorch Lightning
+            name: efficientnets-cli-config-yaml
+        triggers:
+        branches:
+            ignore: irrelevant-branch
