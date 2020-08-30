@@ -17,7 +17,7 @@ workflows:
                 MAX_STEPS: 1
                 TRAIN_EPOCHS: 1
             machineType: P5000
-            modelType: PyTorch Lightning
+            modelType: PyTorch-Lightning
             name: efficientnets-cli-config-yaml
         triggers:
         branches:
