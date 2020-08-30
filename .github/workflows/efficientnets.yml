@@ -45,7 +45,7 @@ jobs:
         run: |
           conda info
           conda list
-          python -m pytest src ${{ matrix.test-file }}
+          python -m pytest datamodule dataset logger model utils ${{ matrix.test-file }}
         shell: bash -l {0}
 
       - name: Codecov
