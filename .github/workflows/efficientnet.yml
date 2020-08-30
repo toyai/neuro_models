@@ -1,0 +1,54 @@
+name: EfficientNets
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  fast-dev-run:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-file:
+          [
+            tests/efficientnets/test_efficientnets_1.py,
+            tests/efficientnets/test_efficientnets_2.py,
+            tests/efficientnets/test_efficientnets_3.py,
+            tests/efficientnets/test_efficientnets_4.py,
+          ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v2
+        with:
+          path: ~/conda_pkgs_dir
+          key: conda-${{ hashFiles('env.yml') }}
+          restore-keys: |
+            conda-${{ hashFiles('env.yml') }}
+
+      # https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf
+      # https://gist.github.com/mwouts/9842452d020c08faf9e84a3bba38a66f
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v1.7.0
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          python-version: 3.8
+          environment-file: env.yml
+          activate-environment: net-env
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+
+      - name: Tests
+        run: |
+          conda info
+          conda list
+          python -m pytest src ${{ matrix.test-file }}
+        shell: bash -l {0}
+
+      - name: Codecov
+        uses: codecov/codecov-action@v1.0.13
+        with:
+          file: ./coverage.xml
