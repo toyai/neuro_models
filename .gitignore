@@ -136,3 +136,4 @@ lightning_logs
 cifar-10-python.tar.gz
 cifar-10-batches-py
 logs
+outputs

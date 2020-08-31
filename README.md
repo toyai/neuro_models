@@ -1,1 +1,5 @@
-# template name
+# Neuro Models • [![CodeFactor](https://www.codefactor.io/repository/github/neurobytes/neuro_models/badge)](https://www.codefactor.io/repository/github/neurobytes/neuro_models) [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/neurobytes/neuro_models/blob/master/LICENSE) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat)](https://pycqa.github.io/isort/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+|     Model     |                                                                                           Fast Dev Run                                                                                            |
+| :-----------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| EfficientNets | [![EfficientNets](https://github.com/neurobytes/neuro_models/workflows/EfficientNets/badge.svg?branch=master)](https://github.com/neurobytes/neuro_models/actions?query=workflow%3AEfficientNets) |
