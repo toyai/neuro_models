@@ -21,7 +21,6 @@ def test_efficientnets(name, test):
                 f"name={name}",
                 "logger=false",
                 f"test={test}",
-                "ckpt=false",
                 "pl.max_epochs=1",
                 "pl.gpus=0",
                 "pl.limit_train_batches=1",
