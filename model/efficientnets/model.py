@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 import torch
 from omegaconf import DictConfig
 from pytorch_lightning import seed_everything
-from pytorch_lightning.metrics.functional import accuracy
+from pytorch_lightning.metrics.functional import f1_score
 from torch import nn
 from torch.nn import functional as F
 
@@ -278,7 +278,7 @@ class EfficientNetGym(pl.LightningModule):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        acc = f1_score(F.log_softmax(pred, dim=1), target)
         logs = {"step_train_loss": loss, "step_train_acc": acc}
 
         return {"loss": loss, "acc": acc, "log": logs}
@@ -294,7 +294,7 @@ class EfficientNetGym(pl.LightningModule):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        acc = f1_score(F.log_softmax(pred, dim=1), target)
         # no log at valiation step
         return {"val_loss": loss, "val_acc": acc}
 
@@ -309,7 +309,7 @@ class EfficientNetGym(pl.LightningModule):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        acc = f1_score(F.log_softmax(pred, dim=1), target)
         # no log at test step
         return {"test_loss": loss, "test_acc": acc}
 
