@@ -9,8 +9,8 @@ from model.efficientnets.run import main as efficientnets_main
 @pytest.mark.parametrize(
     ["name", "test"],
     [
-        pytest.param("efficientnet-b1", True),
-        pytest.param("efficientnet-b1", False),
+        pytest.param("efficientnet-b0", True),
+        pytest.param("efficientnet-b0", False),
     ],
 )
 def test_efficientnets(name, test):

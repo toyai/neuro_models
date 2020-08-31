@@ -14,10 +14,14 @@ jobs:
       matrix:
         test-file:
           [
+            tests/efficientnets/test_efficientnets_0.py,
             tests/efficientnets/test_efficientnets_1.py,
             tests/efficientnets/test_efficientnets_2.py,
             tests/efficientnets/test_efficientnets_3.py,
             tests/efficientnets/test_efficientnets_4.py,
+            tests/efficientnets/test_efficientnets_5.py,
+            tests/efficientnets/test_efficientnets_6.py,
+            tests/efficientnets/test_efficientnets_7.py,
           ]
     steps:
       - uses: actions/checkout@v2

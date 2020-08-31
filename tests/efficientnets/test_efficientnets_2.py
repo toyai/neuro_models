@@ -2,16 +2,15 @@ import os
 
 import pytest
 from hydra.experimental import compose, initialize
-from src.efficientnets.run import main as efficientnets_main
+
+from model.efficientnets.run import main as efficientnets_main
 
 
 @pytest.mark.parametrize(
     ["name", "test"],
     [
-        pytest.param("efficientnet-b1", True),
-        pytest.param("efficientnet-b1", False),
-        pytest.param("efficientnet-b6", False),
-        pytest.param("efficientnet-b6", True),
+        pytest.param("efficientnet-b2", True),
+        pytest.param("efficientnet-b2", False),
     ],
 )
 def test_efficientnets(name, test):
