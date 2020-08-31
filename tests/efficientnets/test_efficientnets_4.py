@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from hydra.experimental import compose, initialize
+from hydra.experimental import compose, initialize_config_dir
 
 from model.efficientnets.run import main as efficientnets_main
 
@@ -14,7 +14,7 @@ from model.efficientnets.run import main as efficientnets_main
     ],
 )
 def test_efficientnets(name, test):
-    with initialize(config_path=os.getcwd() + "/conf"):
+    with initialize_config_dir(os.getcwd() + "/conf"):
         cfg = compose(
             config_name="efficientnets",
             overrides=[
