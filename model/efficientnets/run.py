@@ -1,8 +1,8 @@
 """
 Run the training and testing script.
 """
-import os
 import logging
+import os
 
 import hydra
 from hydra.utils import instantiate
@@ -18,8 +18,8 @@ log = logging.getLogger(__name__)
 
 
 @hydra.main(config_path=os.getcwd() + "/conf", config_name="efficientnets")
-def main(cfg: DictConfig):
-    log.info(f"Training Configs:\n{OmegaConf.to_yaml(cfg)}")
+def main(cfg: DictConfig = None):
+    log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
     network = EfficientNet(num_classes=cfg.lm.num_classes, name=cfg.name)
     gym = EfficientNetGym(network, cfg)

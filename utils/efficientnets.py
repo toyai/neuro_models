@@ -146,8 +146,5 @@ class Swish(nn.Module):
         input * sigmoid(input)
     """
 
-    def __init__(self):
-        super().__init__()
-
     def forward(self, x):
         return x * torch.sigmoid(x)
