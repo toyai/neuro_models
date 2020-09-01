@@ -49,7 +49,7 @@ jobs:
         run: |
           conda info
           conda list
-          python -m pytest datamodules datasets loggers lightnings models utils ${{ matrix.test-file }}
+          python -m pytest datamodules datasets loggers lightnings models scripts utils ${{ matrix.test-file }}
         shell: bash -l {0}
 
       - name: Codecov
