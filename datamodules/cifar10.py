@@ -7,8 +7,8 @@ from typing import Optional
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
-from torchvision.datasets import CIFAR10
 from torchvision import transforms as T
+from torchvision.datasets import CIFAR10
 
 
 class CIFAR10DataModule(LightningDataModule):
