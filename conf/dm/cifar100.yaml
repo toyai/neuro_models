@@ -1,6 +1,6 @@
 # @package _global_
 dm:
-  _target_: datamodule.cifar100.CIFAR100DataModule
+  _target_: datamodules.cifar100.CIFAR100DataModule
   train_dataloader_conf:
     batch_size: 32
     pin_memory: true
