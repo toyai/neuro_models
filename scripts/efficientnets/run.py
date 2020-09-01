@@ -1,20 +1,23 @@
 """
 Run the training and testing script.
 """
-import os
 import logging
+import os
 
 import hydra
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
-from pytorch_lightning import Trainer
+from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.core.memory import ModelSummary
 from pytorch_lightning.loggers import WandbLogger
 
-from model.efficientnets.model import EfficientNet, EfficientNetGym
+from lightnings.efficientnets import EfficientNetGym
+from models.efficientnets import EfficientNet
 
 log = logging.getLogger(__name__)
+
+seed_everything(666)
 
 
 @hydra.main(config_path=os.getcwd() + "/conf", config_name="efficientnets")
