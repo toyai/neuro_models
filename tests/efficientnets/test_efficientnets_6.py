@@ -3,7 +3,7 @@ import os
 import pytest
 from hydra.experimental import compose, initialize_config_dir
 
-from model.efficientnets.run import main as efficientnets_main
+from scripts.efficientnets.run import main as efficientnets_main
 
 
 @pytest.mark.parametrize(
