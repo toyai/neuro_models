@@ -9,10 +9,10 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.core.memory import ModelSummary
 from pytorch_lightning.loggers import WandbLogger
 
 from lightnings.efficientnets import EfficientNetGym
+from loggers.model_logger import model_logger, model_summary_logger
 from models.efficientnets import EfficientNet
 
 log = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 seed_everything(666)
 
 
-@hydra.main(config_path=os.getcwd() + "/conf", config_name="efficientnets")
+@hydra.main(config_path=os.getcwd() + "/conf/model", config_name="efficientnets")
 def main(cfg: DictConfig = None):
     log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
@@ -28,15 +28,8 @@ def main(cfg: DictConfig = None):
     gym = EfficientNetGym(network, cfg)
     dm = instantiate(cfg.dm)
 
-    with open(f"{cfg.name}.md", "w") as f:
-        f.write(f"## {cfg.name}\n```py\n")
-        f.write(str(network))
-        f.write("\n```")
-
-    with open(f"{cfg.name}-summary.md", "w") as f:
-        f.write(f"## {cfg.name}-summary\n```py\n")
-        f.write(str(ModelSummary(gym, "full")))
-        f.write("\n```")
+    model_logger(cfg.name, network)
+    model_summary_logger(cfg.name, gym)
 
     if cfg.logger:
         dl_logger = WandbLogger(
