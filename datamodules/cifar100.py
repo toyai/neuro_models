@@ -23,32 +23,6 @@ class CIFAR100DataModule(LightningDataModule):
         self.train_dataloader_conf = train_dataloader_conf or OmegaConf.create()
         self.val_dataloader_conf = val_dataloader_conf or OmegaConf.create()
 
-    def prepare_data(self):
-        CIFAR100(
-            os.getcwd(),
-            train=True,
-            download=True,
-            transform=T.Compose(
-                [
-                    T.Resize(size=(224, 224)),
-                    T.ToTensor(),
-                    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ]
-            ),
-        )
-        CIFAR100(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=T.Compose(
-                [
-                    T.Resize(size=(224, 224)),
-                    T.ToTensor(),
-                    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ]
-            ),
-        )
-
     def setup(self, stage: Optional[str] = None):
         train = CIFAR100(
             os.getcwd(),
