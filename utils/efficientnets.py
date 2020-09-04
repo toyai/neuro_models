@@ -1,11 +1,15 @@
 """
 Utilities functions for EfficientNets
 """
+import logging
 import math
+from copy import deepcopy
 from typing import Sequence, Union
 
 import torch
 from torch import nn
+
+log = logging.getLogger(__name__)
 
 
 def blocks_params():
@@ -116,7 +120,12 @@ def get_padding(kernel_size: Union[int, Sequence], stride: Union[int, Sequence])
     sh, sw = stride if isinstance(stride, Sequence) else (stride,) * 2
     pad_h = max(kh - sh, 0)
     pad_w = max(kw - sw, 0)
-    return (pad_w // 2, pad_w - pad_w // 2, pad_h // 2, pad_h - pad_h // 2)
+    return (
+        pad_w - pad_w // 2,
+        pad_w - pad_w // 2,
+        pad_h - pad_h // 2,
+        pad_h - pad_h // 2,
+    )
 
 
 def round_repeats(repeats: int, depth: float):
@@ -137,6 +146,53 @@ def round_filters(filters: int, divisor: int, width: float):
     if new_filters < 0.9 * filters:
         new_filters += divisor
     return int(new_filters)
+
+
+def load_weights(model: nn.Module, name: str, include_fc: bool):
+    """
+    Apache License © Luke Melas-Kyriazi
+
+    Version 2.0, 2004
+
+    Load weights from https://github.com/lukemelas/EfficientNet-PyTorch.
+    """
+    url = "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/"
+    ckpt = {
+        "efficientnet-b0": "efficientnet-b0-355c32eb.pth",
+        "efficientnet-b1": "efficientnet-b1-f1951068.pth",
+        "efficientnet-b2": "efficientnet-b2-8bb594d6.pth",
+        "efficientnet-b3": "efficientnet-b3-5fb5a3c3.pth",
+        "efficientnet-b4": "efficientnet-b4-6ed6700e.pth",
+        "efficientnet-b5": "efficientnet-b5-b6417697.pth",
+        "efficientnet-b6": "efficientnet-b6-c76e70fd.pth",
+        "efficientnet-b7": "efficientnet-b7-dcc49843.pth",
+    }
+    state_dict = torch.hub.load_state_dict_from_url(url + ckpt[name], check_hash=True)
+    keys = iter(model.state_dict().keys())
+    tmp = deepcopy(state_dict)
+
+    for i, tmp_key in enumerate(tmp.keys()):
+        key = next(keys)
+        if key.split(".")[-1] == tmp_key.split(".")[-1]:
+            state_dict[key] = state_dict.pop(tmp_key)
+
+    if include_fc:
+        msg = model.load_state_dict(state_dict)
+        assert (
+            not msg.missing_keys
+        ), f"Missing keys while loading pretrained weights: {msg.missing_keys}"
+    else:
+        state_dict.pop("classifier.3.weight")
+        state_dict.pop("classifier.3.bias")
+        msg = model.load_state_dict(state_dict)
+        assert set(["classifier.3.weight", "classifier.3.bias"]) == set(
+            msg.missing_keys
+        ), f"Missing keys while loading pretrained weights: {msg.missing_keys}"
+
+    assert (
+        not msg.unexpected_keys
+    ), f"Unexpected keys while loading pretrained weights: {msg.unexpected_keys}"
+    log.info("Loaded pretrained weights from %s", url + ckpt[name])
 
 
 class Swish(nn.Module):

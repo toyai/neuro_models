@@ -3,9 +3,10 @@ name: efficientnet-b0
 defaults:
   - dm: cifar10 # for LightningDataModule
 
-# for logger and checkpoint
+# for logger, checkpoint and pretrain
 logger: true
 ckpt: true
+pretrained: true
 
 # .test() or not
 test: true

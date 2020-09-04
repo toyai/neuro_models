@@ -11,6 +11,7 @@ from utils.efficientnets import (
     blocks_params,
     compound_params,
     get_padding,
+    load_weights,
     round_filters,
     round_repeats,
 )
@@ -195,8 +196,16 @@ class MBConvBlock(nn.Module):
 class EfficientNet(nn.Module):
     """EfficientNet Base Model. 🏡"""
 
-    def __init__(self, num_classes: int, name: str, divisor: int = 8):
+    def __init__(
+        self,
+        name: str,
+        num_classes: int = 1000,
+        include_fc: bool = True,
+        divisor: int = 8,
+    ):
         super().__init__()
+        self.include_fc = include_fc
+        self.num_classes = num_classes
         blocks_args = blocks_params()
         width, depth, image_size, dropout_p, momentum, epsilon = compound_params(name)
         out_channels = round_filters(filters=32, divisor=divisor, width=width)
@@ -231,16 +240,24 @@ class EfficientNet(nn.Module):
         self.convs = nn.Sequential(*layers)
 
         # final classification layers
-        self.classifier = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Flatten(1),
-            nn.Dropout(dropout_p),
-            nn.Linear(final_out_channels, num_classes),
-            Swish(),
-        )
+        if include_fc and num_classes == 1000:
+            self.classifier = nn.Sequential(
+                nn.AdaptiveAvgPool2d(1),
+                nn.Flatten(1),
+                nn.Dropout(dropout_p),
+                nn.Linear(final_out_channels, num_classes),
+                Swish(),
+            )
 
     def forward(self, x):
         x = self.convs(x)
-        x = self.classifier(x)
+        x = self.classifier(x) if self.include_fc and self.num_classes == 1000 else x
 
         return x
+
+    @classmethod
+    def from_pretrained(cls, name: str, include_fc: bool = True):
+        """Load weights from https://github.com/lukemelas/EfficientNet-PyTorch."""
+        model = cls(name, include_fc=include_fc)
+        load_weights(model, name, include_fc)
+        return model
