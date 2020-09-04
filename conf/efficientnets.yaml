@@ -3,11 +3,10 @@ name: efficientnet-b0
 defaults:
   - dm: cifar10 # for LightningDataModule
 
-# for logger, checkpoint, pretrain and include FC layer (Avgpool + Flatten + Dropout + Linear + Swish)
+# for logger, checkpoint and pretrain weights
 logger: true
 ckpt: true
 pretrained: true
-include_fc: true
 
 # .test() or not
 test: true

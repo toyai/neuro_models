@@ -149,7 +149,7 @@ def round_filters(filters: int, divisor: int, width: float):
     return int(new_filters)
 
 
-def load_weights(model: nn.Module, name: str, include_fc: bool):
+def load_weights(model: nn.Module, name: str):
     """
     Apache License © Luke Melas-Kyriazi
 
@@ -177,26 +177,13 @@ def load_weights(model: nn.Module, name: str, include_fc: bool):
         if key.split(".")[-1] == tmp_key.split(".")[-1]:
             state_dict[key] = state_dict.pop(tmp_key)
 
-    if include_fc:
-        msg = model.load_state_dict(state_dict)
-        if msg.missing_keys:
-            raise RuntimeError(
-                f"Missing keys while loading pretrained weights: {msg.missing_keys}"
-            )
-    else:
-        state_dict.pop("classifier.3.weight")
-        state_dict.pop("classifier.3.bias")
-        msg = model.load_state_dict(state_dict)
-        same_keys = ["classifier.3.weight", "classifier.3.bias"]
-        if all(x in msg.missing_keys for x in same_keys):
-            raise RuntimeError(
-                f"Missing keys while loading pretrained weights: {same_keys}"
-            )
-
-    if msg.unexpected_keys:
+    msg = model.load_state_dict(state_dict)
+    if msg.missing_keys or msg.unexpected_keys:
         raise RuntimeError(
-            f"Unexpected keys while loading pretrained weights: {msg.unexpected_keys}"
+            f"""Missing keys while loading pretrained weights:
+                {msg.missing_keys}\n{msg.unexpected_keys}"""
         )
+
     log.info("Loaded pretrained weights from %s", url + ckpt[name])
 
 

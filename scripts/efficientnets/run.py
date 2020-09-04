@@ -29,8 +29,9 @@ def main(cfg: DictConfig = None):
     if cfg.pretrained:
         with torch.set_grad_enabled(False):
             network = EfficientNet(
-                name=cfg.name, num_classes=cfg.lm.num_classes, include_fc=cfg.include_fc
-            ).from_pretrained(name=cfg.name, include_fc=cfg.include_fc)
+                name=cfg.name,
+                num_classes=cfg.lm.num_classes,
+            ).from_pretrained(name=cfg.name)
 
         width, _, _, dropout_p, _, _ = compound_params(cfg.name)
         final_out_channels = round_filters(1280, 8, width)
@@ -43,9 +44,7 @@ def main(cfg: DictConfig = None):
             Swish(),
         )
     else:
-        network = EfficientNet(
-            name=cfg.name, num_classes=cfg.lm.num_classes, include_fc=cfg.include_fc
-        )
+        network = EfficientNet(name=cfg.name, num_classes=cfg.lm.num_classes)
 
     gym = EfficientNetGym(network, cfg)
     dm = instantiate(cfg.dm)
