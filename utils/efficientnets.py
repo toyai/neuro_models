@@ -1,6 +1,5 @@
-"""
-Utilities functions for EfficientNets
-"""
+"""Utilities functions for EfficientNets."""
+
 import logging
 import math
 from copy import deepcopy
@@ -89,7 +88,7 @@ def blocks_params():
 
 
 def compound_params(name: str = "efficientnet-b0"):
-    """Compound parameters for Efficient Net Models with some extra parameters
+    """Compound parameters for Efficient Net Models with some extra parameters.
 
     Args:
         name: Efficient Net Model Name. Default: ``efficientnet-b0``.
@@ -130,6 +129,7 @@ def get_padding(kernel_size: Union[int, Sequence], stride: Union[int, Sequence])
 
 def round_repeats(repeats: int, depth: float):
     """Round number of repeats based on depth multiplier.
+
     https://github.com/tensorflow/tensorflow/blob/v2.3.0/tensorflow/python/keras/applications/efficientnet.py#L310
     """
     return int(math.ceil(depth * repeats))
@@ -138,6 +138,7 @@ def round_repeats(repeats: int, depth: float):
 def round_filters(filters: int, divisor: int, width: float):
     """
     Round number of filters based on width multiplier.
+
     https://github.com/tensorflow/tensorflow/blob/v2.3.0/tensorflow/python/keras/applications/efficientnet.py#L301
     """
     filters *= width
@@ -172,30 +173,35 @@ def load_weights(model: nn.Module, name: str, include_fc: bool):
     tmp = deepcopy(state_dict)
 
     for i, tmp_key in enumerate(tmp.keys()):
-        key = next(keys)
+        key = next(keys, None)
         if key.split(".")[-1] == tmp_key.split(".")[-1]:
             state_dict[key] = state_dict.pop(tmp_key)
 
     if include_fc:
         msg = model.load_state_dict(state_dict)
-        assert (
-            not msg.missing_keys
-        ), f"Missing keys while loading pretrained weights: {msg.missing_keys}"
+        if msg.missing_keys:
+            raise RuntimeError(
+                f"Missing keys while loading pretrained weights: {msg.missing_keys}"
+            )
     else:
         state_dict.pop("classifier.3.weight")
         state_dict.pop("classifier.3.bias")
         msg = model.load_state_dict(state_dict)
-        assert set(["classifier.3.weight", "classifier.3.bias"]) == set(
-            msg.missing_keys
-        ), f"Missing keys while loading pretrained weights: {msg.missing_keys}"
+        same_keys = ["classifier.3.weight", "classifier.3.bias"]
+        if all(x in msg.missing_keys for x in same_keys):
+            raise RuntimeError(
+                f"Missing keys while loading pretrained weights: {same_keys}"
+            )
 
-    assert (
-        not msg.unexpected_keys
-    ), f"Unexpected keys while loading pretrained weights: {msg.unexpected_keys}"
+    if msg.unexpected_keys:
+        raise RuntimeError(
+            f"Unexpected keys while loading pretrained weights: {msg.unexpected_keys}"
+        )
     log.info("Loaded pretrained weights from %s", url + ckpt[name])
 
 
 class Swish(nn.Module):
+
     """Swish Activation.
 
     Return:

@@ -1,6 +1,5 @@
-"""
-Run the training and testing script.
-"""
+"""Run the training and testing script."""
+
 import logging
 import os
 
@@ -30,8 +29,8 @@ def main(cfg: DictConfig = None):
     if cfg.pretrained:
         with torch.set_grad_enabled(False):
             network = EfficientNet(
-                name=cfg.name, num_classes=cfg.lm.num_classes
-            ).from_pretrained(name=cfg.name)
+                name=cfg.name, num_classes=cfg.lm.num_classes, include_fc=cfg.include_fc
+            ).from_pretrained(name=cfg.name, include_fc=cfg.include_fc)
 
         width, _, _, dropout_p, _, _ = compound_params(cfg.name)
         final_out_channels = round_filters(1280, 8, width)
@@ -44,7 +43,9 @@ def main(cfg: DictConfig = None):
             Swish(),
         )
     else:
-        network = EfficientNet(name=cfg.name, num_classes=cfg.lm.num_classes)
+        network = EfficientNet(
+            name=cfg.name, num_classes=cfg.lm.num_classes, include_fc=cfg.include_fc
+        )
 
     gym = EfficientNetGym(network, cfg)
     dm = instantiate(cfg.dm)
@@ -67,7 +68,7 @@ def main(cfg: DictConfig = None):
     else:
         dl_logger = True
 
-    ckpt = ModelCheckpoint("ckpt/{epoch}", prefix=cfg.name) if cfg.ckpt else False
+    ckpt = ModelCheckpoint("ckpt/{epoch}", prefix="-" + cfg.name) if cfg.ckpt else False
     trainer = Trainer(**cfg.pl, logger=dl_logger, checkpoint_callback=ckpt)
     trainer.fit(gym, datamodule=dm)
     if cfg.test:

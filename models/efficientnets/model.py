@@ -2,6 +2,7 @@
 EfficientNet B0-7,
 based from tensorflow.keras.applications.efficientnet
 """
+
 from typing import Sequence, Union
 
 from torch import nn
@@ -18,11 +19,12 @@ from utils.efficientnets import (
 
 
 class ConvBN(nn.Module):
+
     """Convolution - BatchNorm - Swish Layers Block.
     It can be used to create Expansion stage, Depthwise Conv and Pointwise Conv.
 
     Return:
-        A Tensor which size is (N, C, H, W)
+        A Tensor which size is `(N, C, H, W)`
     """
 
     def __init__(
@@ -66,10 +68,11 @@ class ConvBN(nn.Module):
 
 
 class SqueezeExcite(nn.Module):
+
     """Squeeze and Excitation stage of MBConvBlock.
 
     Return:
-        A Tensor which size is (N, C, H, W)
+        A Tensor which size is `(N, C, H, W)`
     """
 
     def __init__(
@@ -120,6 +123,7 @@ class SqueezeExcite(nn.Module):
 
 
 class MBConvBlock(nn.Module):
+
     """Mobile Inverted Residual Block."""
 
     def __init__(
@@ -194,6 +198,7 @@ class MBConvBlock(nn.Module):
 
 
 class EfficientNet(nn.Module):
+
     """EfficientNet Base Model. 🏡"""
 
     def __init__(
@@ -240,14 +245,13 @@ class EfficientNet(nn.Module):
         self.convs = nn.Sequential(*layers)
 
         # final classification layers
-        if include_fc and num_classes == 1000:
-            self.classifier = nn.Sequential(
-                nn.AdaptiveAvgPool2d(1),
-                nn.Flatten(1),
-                nn.Dropout(dropout_p),
-                nn.Linear(final_out_channels, num_classes),
-                Swish(),
-            )
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(1),
+            nn.Dropout(dropout_p),
+            nn.Linear(final_out_channels, num_classes),
+            Swish(),
+        )
 
     def forward(self, x):
         x = self.convs(x)
