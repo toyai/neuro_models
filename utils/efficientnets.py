@@ -177,13 +177,7 @@ def load_weights(model: nn.Module, name: str):
         if key.split(".")[-1] == tmp_key.split(".")[-1]:
             state_dict[key] = state_dict.pop(tmp_key)
 
-    msg = model.load_state_dict(state_dict)
-    if msg.missing_keys or msg.unexpected_keys:
-        raise RuntimeError(
-            f"""Missing keys while loading pretrained weights:
-                {msg.missing_keys}\n{msg.unexpected_keys}"""
-        )
-
+    model.load_state_dict(state_dict)
     log.info("Loaded pretrained weights from %s", url + ckpt[name])
 
 

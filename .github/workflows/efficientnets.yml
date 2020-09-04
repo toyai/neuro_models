@@ -22,6 +22,7 @@ jobs:
             tests/efficientnets/test_efficientnets_5.py,
             tests/efficientnets/test_efficientnets_6.py,
             tests/efficientnets/test_efficientnets_7.py,
+            tests/efficientnets/test_load_weights.py,
           ]
     steps:
       - uses: actions/checkout@v2
