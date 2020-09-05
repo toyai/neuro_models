@@ -6,6 +6,7 @@ defaults:
 # for logger and checkpoint
 logger: true
 ckpt: true
+pretrained: true
 
 # .test() or not
 test: true
