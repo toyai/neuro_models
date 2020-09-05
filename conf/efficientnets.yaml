@@ -2,21 +2,16 @@
 name: efficientnet-b0
 defaults:
   - dm: cifar10 # for LightningDataModule
+  - optim: rmsprop
 
 # for logger, checkpoint and pretrain weights
 logger: true
 ckpt: true
 pretrained: true
+num_classes: 10
 
 # .test() or not
 test: true
-
-# for LightningModule
-lm:
-  optimizer: Adam
-  learning_rate: 0.001
-  weight_decay: 0.05
-  num_classes: 10
 
 # pl.Trainer configs
 pl:

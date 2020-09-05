@@ -28,7 +28,7 @@ def main(cfg: DictConfig = None):
     if cfg.pretrained:
         network = EfficientNet(
             name=cfg.name,
-            num_classes=cfg.lm.num_classes,
+            num_classes=cfg.num_classes,
         ).from_pretrained(name=cfg.name)
         for params in network.parameters():
             params.requires_grad = False
@@ -40,10 +40,10 @@ def main(cfg: DictConfig = None):
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(1),
             nn.Dropout(dropout_p),
-            nn.Linear(final_out_channels, cfg.lm.num_classes),
+            nn.Linear(final_out_channels, cfg.num_classes),
         )
     else:
-        network = EfficientNet(name=cfg.name, num_classes=cfg.lm.num_classes)
+        network = EfficientNet(name=cfg.name, num_classes=cfg.num_classes)
 
     gym = EfficientNetGym(network, cfg)
     dm = instantiate(cfg.dm)
@@ -60,7 +60,8 @@ def main(cfg: DictConfig = None):
 
     if cfg.logger:
         dl_logger = WandbLogger(
-            name=f"{cfg.lm.optimizer}-{cfg.lm.learning_rate}",
+            # name=f"{cfg.lm.optimizer}-{cfg.lm.learning_rate}",
+            name=f"{cfg.optim}",
             project=cfg.name,
         )
     else:

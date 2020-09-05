@@ -1,5 +1,6 @@
 import pytorch_lightning as pl
 import torch
+from hydra.utils import instantiate
 from omegaconf import DictConfig
 from pytorch_lightning.metrics.functional import f1_score
 from torch import nn
@@ -19,12 +20,13 @@ class EfficientNetGym(pl.LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        optim = getattr(torch.optim, self.hparams.lm.optimizer)
-        return optim(
-            self.parameters(),
-            lr=self.hparams.lm.learning_rate,
-            weight_decay=self.hparams.lm.weight_decay,
-        )
+        return instantiate(self.hparams.optim, **{"params": self.parameters()})
+        # optim = getattr(torch.optim, self.hparams.lm.optimizer)
+        # return optim(
+        #     self.parameters(),
+        #     lr=self.hparams.lm.learning_rate,
+        #     weight_decay=self.hparams.lm.weight_decay,
+        # )
 
     def training_step(self, batch, batch_idx):
         img, target = batch
