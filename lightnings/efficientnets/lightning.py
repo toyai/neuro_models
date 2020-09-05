@@ -20,7 +20,7 @@ class EfficientNetGym(pl.LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return instantiate(self.hparams.optim, **{"params": self.parameters()})
+        return instantiate(self.hparams.optim)
         # optim = getattr(torch.optim, self.hparams.lm.optimizer)
         # return optim(
         #     self.parameters(),
