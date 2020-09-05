@@ -4,7 +4,6 @@ import logging
 import os
 
 import hydra
-import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
@@ -15,7 +14,7 @@ from torch import nn
 
 from lightnings.efficientnets import EfficientNetGym
 from models.efficientnets import EfficientNet
-from utils.efficientnets import Swish, compound_params, round_filters
+from utils.efficientnets import compound_params, round_filters
 
 log = logging.getLogger(__name__)
 
@@ -27,11 +26,12 @@ def main(cfg: DictConfig = None):
     log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
     if cfg.pretrained:
-        with torch.set_grad_enabled(False):
-            network = EfficientNet(
-                name=cfg.name,
-                num_classes=cfg.lm.num_classes,
-            ).from_pretrained(name=cfg.name)
+        network = EfficientNet(
+            name=cfg.name,
+            num_classes=cfg.lm.num_classes,
+        ).from_pretrained(name=cfg.name)
+        for params in network.parameters():
+            params.requires_grad = False
 
         width, _, _, dropout_p, _, _ = compound_params(cfg.name)
         final_out_channels = round_filters(1280, 8, width)
@@ -41,7 +41,6 @@ def main(cfg: DictConfig = None):
             nn.Flatten(1),
             nn.Dropout(dropout_p),
             nn.Linear(final_out_channels, cfg.lm.num_classes),
-            Swish(),
         )
     else:
         network = EfficientNet(name=cfg.name, num_classes=cfg.lm.num_classes)

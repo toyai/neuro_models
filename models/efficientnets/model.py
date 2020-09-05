@@ -247,7 +247,6 @@ class EfficientNet(nn.Module):
             nn.Flatten(1),
             nn.Dropout(dropout_p),
             nn.Linear(final_out_channels, num_classes),
-            Swish(),
         )
 
     def forward(self, x):
