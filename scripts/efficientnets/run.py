@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 seed_everything(666)
 
 
-@hydra.main(config_path=os.getcwd() + "/conf/model", config_name="efficientnets")
+@hydra.main(config_path=os.getcwd() + "/conf", config_name="efficientnets")
 def main(cfg: DictConfig = None):
     log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
