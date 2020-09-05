@@ -2,6 +2,7 @@
 EfficientNet B0-7,
 based from tensorflow.keras.applications.efficientnet
 """
+
 from typing import Sequence, Union
 
 from torch import nn
@@ -11,17 +12,19 @@ from utils.efficientnets import (
     blocks_params,
     compound_params,
     get_padding,
+    load_weights,
     round_filters,
     round_repeats,
 )
 
 
 class ConvBN(nn.Module):
+
     """Convolution - BatchNorm - Swish Layers Block.
     It can be used to create Expansion stage, Depthwise Conv and Pointwise Conv.
 
     Return:
-        A Tensor which size is (N, C, H, W)
+        A Tensor which size is `(N, C, H, W)`
     """
 
     def __init__(
@@ -65,10 +68,11 @@ class ConvBN(nn.Module):
 
 
 class SqueezeExcite(nn.Module):
+
     """Squeeze and Excitation stage of MBConvBlock.
 
     Return:
-        A Tensor which size is (N, C, H, W)
+        A Tensor which size is `(N, C, H, W)`
     """
 
     def __init__(
@@ -119,6 +123,7 @@ class SqueezeExcite(nn.Module):
 
 
 class MBConvBlock(nn.Module):
+
     """Mobile Inverted Residual Block."""
 
     def __init__(
@@ -193,9 +198,15 @@ class MBConvBlock(nn.Module):
 
 
 class EfficientNet(nn.Module):
+
     """EfficientNet Base Model. 🏡"""
 
-    def __init__(self, num_classes: int, name: str, divisor: int = 8):
+    def __init__(
+        self,
+        name: str,
+        num_classes: int = 1000,
+        divisor: int = 8,
+    ):
         super().__init__()
         blocks_args = blocks_params()
         width, depth, image_size, dropout_p, momentum, epsilon = compound_params(name)
@@ -244,3 +255,10 @@ class EfficientNet(nn.Module):
         x = self.classifier(x)
 
         return x
+
+    @classmethod
+    def from_pretrained(cls, name: str):
+        """Load weights from https://github.com/lukemelas/EfficientNet-PyTorch."""
+        model = cls(name)
+        load_weights(model, name)
+        return model
