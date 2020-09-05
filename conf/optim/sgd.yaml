@@ -1,5 +1,4 @@
 # @package _global_
 optim:
   _target_: torch.optim.SGD
-  params: self.parameters()
   lr: 0.01

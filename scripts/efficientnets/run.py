@@ -60,7 +60,6 @@ def main(cfg: DictConfig = None):
 
     if cfg.logger:
         dl_logger = WandbLogger(
-            # name=f"{cfg.lm.optimizer}-{cfg.lm.learning_rate}",
             name=f"{cfg.optim}",
             project=cfg.name,
         )

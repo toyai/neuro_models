@@ -20,13 +20,7 @@ class EfficientNetGym(pl.LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return instantiate(self.hparams.optim)
-        # optim = getattr(torch.optim, self.hparams.lm.optimizer)
-        # return optim(
-        #     self.parameters(),
-        #     lr=self.hparams.lm.learning_rate,
-        #     weight_decay=self.hparams.lm.weight_decay,
-        # )
+        return instantiate(self.hparams.optim, **{"params": self.parameters()})
 
     def training_step(self, batch, batch_idx):
         img, target = batch
