@@ -1,0 +1,9 @@
+datasets:
+  _target_: datasets.coco.CocoDetectionDataset
+  path: /datasets/cifar10
+  transforms:
+    - def: RandomAffine
+      degrees: 10
+      shear: 10
+
+    - def: ToTensor
