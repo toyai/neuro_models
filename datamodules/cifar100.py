@@ -1,6 +1,5 @@
-"""
-LightningDataModule for CIFAR100
-"""
+"""LightningDataModule for CIFAR100."""
+
 import os
 from typing import Optional
 
@@ -16,10 +15,12 @@ class CIFAR100DataModule(LightningDataModule):
 
     def __init__(
         self,
+        img_size: int,
         train_dataloader_conf: Optional[DictConfig] = None,
         val_dataloader_conf: Optional[DictConfig] = None,
     ):
         super().__init__()
+        self.img_size = img_size
         self.train_dataloader_conf = train_dataloader_conf or OmegaConf.create()
         self.val_dataloader_conf = val_dataloader_conf or OmegaConf.create()
 
@@ -30,7 +31,7 @@ class CIFAR100DataModule(LightningDataModule):
             download=True,
             transform=T.Compose(
                 [
-                    T.Resize(size=(224, 224)),
+                    T.Resize(size=(self.img_size, self.img_size)),
                     T.ToTensor(),
                     T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 ]
@@ -42,7 +43,7 @@ class CIFAR100DataModule(LightningDataModule):
             download=True,
             transform=T.Compose(
                 [
-                    T.Resize(size=(224, 224)),
+                    T.Resize(size=(self.img_size, self.img_size)),
                     T.ToTensor(),
                     T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 ]
