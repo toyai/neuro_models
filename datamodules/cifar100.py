@@ -49,7 +49,7 @@ class CIFAR100DataModule(LightningDataModule):
                 ]
             ),
         )
-        train, val = random_split(train, [40000, 10000])
+        train, val = random_split(train, [45000, 5000])
         self.train_dataset = train
         self.val_dataset = val
         self.test_dataset = test

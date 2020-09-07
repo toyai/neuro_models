@@ -1,0 +1,6 @@
+# @package _global_
+optim:
+  _target_: torch.optim.Adam
+  lr: 0.001
+  weight_decay: 0.8
+  eps: 0.0001

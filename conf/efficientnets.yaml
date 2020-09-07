@@ -2,7 +2,7 @@
 name: efficientnet-b0
 defaults:
   - dm: cifar10 # for LightningDataModule
-  - optim: rmsprop
+  - optim: sgd
 
 # for logger, checkpoint and pretrain weights
 logger: true

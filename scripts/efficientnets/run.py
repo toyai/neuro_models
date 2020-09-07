@@ -25,6 +25,8 @@ seed_everything(666)
 def main(cfg: DictConfig = None):
     log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
+    width, _, img_size, dropout_p, _, _ = compound_params(cfg.name)
+
     if cfg.pretrained:
         network = EfficientNet(
             name=cfg.name,
@@ -33,7 +35,6 @@ def main(cfg: DictConfig = None):
         for params in network.parameters():
             params.requires_grad = False
 
-        width, _, img_size, dropout_p, _, _ = compound_params(cfg.name)
         final_out_channels = round_filters(1280, 8, width)
 
         network.classifier = nn.Sequential(

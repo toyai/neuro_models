@@ -2,7 +2,7 @@
 dm:
   _target_: datamodules.cifar100.CIFAR100DataModule
   train_dataloader_conf:
-    batch_size: 32
+    batch_size: 64
     pin_memory: true
     shuffle: true
     num_workers: 4
