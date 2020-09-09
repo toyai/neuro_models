@@ -1,3 +1,3 @@
-from models.efficientnets.model import EfficientNet
+from models.efficientnets.efficientnets_model import EfficientNet
 
 __all__ = ["EfficientNet"]

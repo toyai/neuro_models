@@ -209,7 +209,7 @@ class EfficientNet(nn.Module):
     ):
         super().__init__()
         blocks_args = blocks_params()
-        width, depth, image_size, dropout_p, momentum, epsilon = compound_params(name)
+        width, depth, _, dropout_p, momentum, epsilon = compound_params(name)
         out_channels = round_filters(filters=32, divisor=divisor, width=width)
 
         # conv stem
@@ -247,7 +247,6 @@ class EfficientNet(nn.Module):
             nn.Flatten(1),
             nn.Dropout(dropout_p),
             nn.Linear(final_out_channels, num_classes),
-            Swish(),
         )
 
     def forward(self, x):

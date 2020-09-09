@@ -1,8 +1,7 @@
-"""
-LightningDataModule for CIFAR10
-"""
+"""LightningDataModule for CIFAR10."""
+
 import os
-from typing import Optional
+from typing import Optional, Union
 
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import LightningDataModule
@@ -16,10 +15,16 @@ class CIFAR10DataModule(LightningDataModule):
 
     def __init__(
         self,
+        train_transforms_conf: T.Compose,
+        test_transforms_conf: T.Compose,
+        train_dataset_size: Union[float, int],
         train_dataloader_conf: Optional[DictConfig] = None,
         val_dataloader_conf: Optional[DictConfig] = None,
     ):
         super().__init__()
+        self.train_transforms_conf = train_transforms_conf
+        self.test_transforms_conf = test_transforms_conf
+        self.train_dataset_size = train_dataset_size
         self.train_dataloader_conf = train_dataloader_conf or OmegaConf.create()
         self.val_dataloader_conf = val_dataloader_conf or OmegaConf.create()
 
@@ -28,27 +33,19 @@ class CIFAR10DataModule(LightningDataModule):
             os.getcwd(),
             train=True,
             download=True,
-            transform=T.Compose(
-                [
-                    T.Resize(size=(224, 224)),
-                    T.ToTensor(),
-                    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ]
-            ),
+            transform=self.train_transforms_conf,
         )
         test = CIFAR10(
             os.getcwd(),
             train=False,
             download=True,
-            transform=T.Compose(
-                [
-                    T.Resize(size=(224, 224)),
-                    T.ToTensor(),
-                    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ]
-            ),
+            transform=self.test_transforms_conf,
         )
-        train, val = random_split(train, [40000, 10000])
+        split_sizes = [
+            round(len(train) * self.train_dataset_size),
+            round(len(train) * (1 - self.train_dataset_size)),
+        ]
+        train, val = random_split(train, split_sizes)
         self.train_dataset = train
         self.val_dataset = val
         self.test_dataset = test

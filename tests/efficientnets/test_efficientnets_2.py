@@ -25,7 +25,7 @@ def test_efficientnets(name, dm, num_classes, pretrained):
                 f"name={name}",
                 f"dm={dm}",
                 f"pretrained={pretrained}",
-                f"lm.num_classes={num_classes}",
+                f"num_classes={num_classes}",
                 "logger=false",
                 "pl.max_epochs=1",
                 "pl.gpus=0",

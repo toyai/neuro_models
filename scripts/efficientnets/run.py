@@ -4,7 +4,6 @@ import logging
 import os
 
 import hydra
-import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
@@ -12,10 +11,11 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.core.memory import ModelSummary
 from pytorch_lightning.loggers import WandbLogger
 from torch import nn
+from torchvision import transforms as T
 
-from lightnings.efficientnets import EfficientNetGym
+from lightningmodules.efficientnets import EfficientNetGym
 from models.efficientnets import EfficientNet
-from utils.efficientnets import Swish, compound_params, round_filters
+from utils.efficientnets import compound_params, round_filters
 
 log = logging.getLogger(__name__)
 
@@ -24,30 +24,40 @@ seed_everything(666)
 
 @hydra.main(config_path=os.getcwd() + "/conf", config_name="efficientnets")
 def main(cfg: DictConfig = None):
-    log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
+    log.info("==> Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
+    width, _, img_size, dropout_p, _, _ = compound_params(cfg.name)
+    transforms = T.Compose(
+        [
+            T.Resize(size=(img_size, img_size)),
+            T.ToTensor(),
+            T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ]
+    )
     if cfg.pretrained:
-        with torch.set_grad_enabled(False):
-            network = EfficientNet(
-                name=cfg.name,
-                num_classes=cfg.lm.num_classes,
-            ).from_pretrained(name=cfg.name)
+        network = EfficientNet(
+            name=cfg.name,
+            num_classes=cfg.num_classes,
+        ).from_pretrained(name=cfg.name)
+        for params in network.parameters():
+            params.requires_grad = False
 
-        width, _, _, dropout_p, _, _ = compound_params(cfg.name)
         final_out_channels = round_filters(1280, 8, width)
 
         network.classifier = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(1),
             nn.Dropout(dropout_p),
-            nn.Linear(final_out_channels, cfg.lm.num_classes),
-            Swish(),
+            nn.Linear(final_out_channels, cfg.num_classes),
         )
     else:
-        network = EfficientNet(name=cfg.name, num_classes=cfg.lm.num_classes)
+        network = EfficientNet(name=cfg.name, num_classes=cfg.num_classes)
 
     gym = EfficientNetGym(network, cfg)
-    dm = instantiate(cfg.dm)
+    dm = instantiate(
+        cfg.dm,
+        **{"train_transforms_conf": transforms, "test_transforms_conf": transforms},
+    )
 
     with open(f"{cfg.name}.md", "w") as f:
         f.write(f"## {cfg.name}\n```py\n")
@@ -60,15 +70,16 @@ def main(cfg: DictConfig = None):
         f.write("\n```")
 
     if cfg.logger:
-        dl_logger = WandbLogger(
-            name=f"{cfg.lm.optimizer}-{cfg.lm.learning_rate}",
+        logger_ = WandbLogger(
+            name=f"{cfg.optim}",
             project=cfg.name,
         )
+        logger_.watch(network, "all")
     else:
-        dl_logger = True
+        logger_ = True
 
     ckpt = ModelCheckpoint("ckpt/{epoch}", prefix="-" + cfg.name) if cfg.ckpt else False
-    trainer = Trainer(**cfg.pl, logger=dl_logger, checkpoint_callback=ckpt)
+    trainer = Trainer(**cfg.pl, logger=logger_, checkpoint_callback=ckpt)
     trainer.fit(gym, datamodule=dm)
     if cfg.test:
         trainer.test(datamodule=dm)
