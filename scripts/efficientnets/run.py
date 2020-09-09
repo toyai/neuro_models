@@ -12,7 +12,7 @@ from pytorch_lightning.core.memory import ModelSummary
 from pytorch_lightning.loggers import WandbLogger
 from torch import nn
 
-from lightnings.efficientnets import EfficientNetGym
+from lightningmodules.efficientnets import EfficientNetGym
 from models.efficientnets import EfficientNet
 from utils.efficientnets import compound_params, round_filters
 
@@ -60,15 +60,16 @@ def main(cfg: DictConfig = None):
         f.write("\n```")
 
     if cfg.logger:
-        dl_logger = WandbLogger(
+        logger_ = WandbLogger(
             name=f"{cfg.optim}",
             project=cfg.name,
         )
+        logger_.watch(network, "all")
     else:
-        dl_logger = True
+        logger_ = True
 
     ckpt = ModelCheckpoint("ckpt/{epoch}", prefix="-" + cfg.name) if cfg.ckpt else False
-    trainer = Trainer(**cfg.pl, logger=dl_logger, checkpoint_callback=ckpt)
+    trainer = Trainer(**cfg.pl, logger=logger_, checkpoint_callback=ckpt)
     trainer.fit(gym, datamodule=dm)
     if cfg.test:
         trainer.test(datamodule=dm)

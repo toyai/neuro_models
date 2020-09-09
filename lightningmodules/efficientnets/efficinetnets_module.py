@@ -2,7 +2,7 @@ import pytorch_lightning as pl
 import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
-from pytorch_lightning.metrics.functional import f1_score
+from pytorch_lightning.metrics.functional import accuracy
 from torch import nn
 from torch.nn import functional as F
 
@@ -22,11 +22,15 @@ class EfficientNetGym(pl.LightningModule):
     def configure_optimizers(self):
         return instantiate(self.hparams.optim, **{"params": self.parameters()})
 
-    def training_step(self, batch, batch_idx):
+    def _step(self, batch, batch_idx):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = f1_score(F.log_softmax(pred, dim=1), target)
+        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        return loss, acc
+
+    def training_step(self, batch, batch_idx):
+        loss, acc = self._step(batch, batch_idx)
         logs = {"step_train_loss": loss, "step_train_acc": acc}
 
         return {"loss": loss, "acc": acc, "log": logs}
@@ -39,10 +43,7 @@ class EfficientNetGym(pl.LightningModule):
         return {"log": logs}
 
     def validation_step(self, batch, batch_idx):
-        img, target = batch
-        pred = self(img)
-        loss = F.cross_entropy(pred, target)
-        acc = f1_score(F.log_softmax(pred, dim=1), target)
+        loss, acc = self._step(batch, batch_idx)
         # no log at valiation step
         return {"val_loss": loss, "val_acc": acc}
 
@@ -54,10 +55,7 @@ class EfficientNetGym(pl.LightningModule):
         return {"log": logs}
 
     def test_step(self, batch, batch_idx):
-        img, target = batch
-        pred = self(img)
-        loss = F.cross_entropy(pred, target)
-        acc = f1_score(F.log_softmax(pred, dim=1), target)
+        loss, acc = self._step(batch, batch_idx)
         # no log at test step
         return {"test_loss": loss, "test_acc": acc}
 

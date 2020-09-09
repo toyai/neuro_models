@@ -15,12 +15,14 @@ class CIFAR100DataModule(LightningDataModule):
 
     def __init__(
         self,
-        img_size: int,
+        train_transforms_conf: T.Compose = None,
+        test_transforms_conf: T.Compose = None,
         train_dataloader_conf: Optional[DictConfig] = None,
         val_dataloader_conf: Optional[DictConfig] = None,
     ):
         super().__init__()
-        self.img_size = img_size
+        self.train_transforms_conf = train_transforms_conf
+        self.test_transforms_conf = test_transforms_conf
         self.train_dataloader_conf = train_dataloader_conf or OmegaConf.create()
         self.val_dataloader_conf = val_dataloader_conf or OmegaConf.create()
 
@@ -29,25 +31,13 @@ class CIFAR100DataModule(LightningDataModule):
             os.getcwd(),
             train=True,
             download=True,
-            transform=T.Compose(
-                [
-                    T.Resize(size=(self.img_size, self.img_size)),
-                    T.ToTensor(),
-                    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ]
-            ),
+            transform=self.train_transforms_conf,
         )
         test = CIFAR100(
             os.getcwd(),
             train=False,
             download=True,
-            transform=T.Compose(
-                [
-                    T.Resize(size=(self.img_size, self.img_size)),
-                    T.ToTensor(),
-                    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ]
-            ),
+            transform=self.test_transforms_conf,
         )
         train, val = random_split(train, [45000, 5000])
         self.train_dataset = train
