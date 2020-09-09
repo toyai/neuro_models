@@ -56,7 +56,7 @@ jobs:
         run: |
           conda info
           conda list
-          python -m pytest datamodules datasets loggers lightnings models scripts utils ${{ matrix.test-file }} --hypothesis-show-statistics
+          python -m pytest datamodules datasets lightningmodules loggers models scripts utils ${{ matrix.test-file }} --hypothesis-show-statistics
         shell: bash -l {0}
 
       - name: Codecov
