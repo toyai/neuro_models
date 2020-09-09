@@ -29,9 +29,9 @@ def main(cfg: DictConfig = None):
     width, _, img_size, dropout_p, _, _ = compound_params(cfg.name)
     transforms = T.Compose(
         [
-            T.Resize(img_size, img_size),
+            T.Resize(size=(img_size, img_size)),
             T.ToTensor(),
-            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         ]
     )
     if cfg.pretrained:
