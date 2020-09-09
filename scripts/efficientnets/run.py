@@ -11,6 +11,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.core.memory import ModelSummary
 from pytorch_lightning.loggers import WandbLogger
 from torch import nn
+from torchvision import transforms as T
 
 from lightningmodules.efficientnets import EfficientNetGym
 from models.efficientnets import EfficientNet
@@ -26,7 +27,13 @@ def main(cfg: DictConfig = None):
     log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
     width, _, img_size, dropout_p, _, _ = compound_params(cfg.name)
-
+    transforms = T.Compose(
+        [
+            T.Resize(img_size, img_size),
+            T.ToTensor(),
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
     if cfg.pretrained:
         network = EfficientNet(
             name=cfg.name,
@@ -47,7 +54,10 @@ def main(cfg: DictConfig = None):
         network = EfficientNet(name=cfg.name, num_classes=cfg.num_classes)
 
     gym = EfficientNetGym(network, cfg)
-    dm = instantiate(cfg.dm)
+    dm = instantiate(
+        cfg.dm,
+        **{"train_transforms_conf": transforms, "test_transforms_conf": transforms},
+    )
 
     with open(f"{cfg.name}.md", "w") as f:
         f.write(f"## {cfg.name}\n```py\n")
