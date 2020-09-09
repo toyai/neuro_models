@@ -47,7 +47,7 @@ def main(cfg: DictConfig = None):
         network = EfficientNet(name=cfg.name, num_classes=cfg.num_classes)
 
     gym = EfficientNetGym(network, cfg)
-    dm = instantiate(cfg.dm, **{"img_size": img_size})
+    dm = instantiate(cfg.dm)
 
     with open(f"{cfg.name}.md", "w") as f:
         f.write(f"## {cfg.name}\n```py\n")
