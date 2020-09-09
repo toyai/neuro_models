@@ -24,7 +24,7 @@ seed_everything(666)
 
 @hydra.main(config_path=os.getcwd() + "/conf", config_name="efficientnets")
 def main(cfg: DictConfig = None):
-    log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
+    log.info("==> Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
     width, _, img_size, dropout_p, _, _ = compound_params(cfg.name)
     transforms = T.Compose(

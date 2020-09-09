@@ -1,7 +1,7 @@
 """LightningDataModule for CIFAR100."""
 
 import os
-from typing import Optional
+from typing import Optional, Union
 
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import LightningDataModule
@@ -15,8 +15,9 @@ class CIFAR100DataModule(LightningDataModule):
 
     def __init__(
         self,
-        train_transforms_conf: T.Compose = None,
-        test_transforms_conf: T.Compose = None,
+        train_transforms_conf: T.Compose,
+        test_transforms_conf: T.Compose,
+        train_dataset_size: Union[float, int],
         train_dataloader_conf: Optional[DictConfig] = None,
         val_dataloader_conf: Optional[DictConfig] = None,
     ):
@@ -39,7 +40,11 @@ class CIFAR100DataModule(LightningDataModule):
             download=True,
             transform=self.test_transforms_conf,
         )
-        train, val = random_split(train, [45000, 5000])
+        split_sizes = [
+            len(train) * self.train_dataset_size,
+            len(train) * (1 - self.train_dataset_size),
+        ]
+        train, val = random_split(train, split_sizes)
         self.train_dataset = train
         self.val_dataset = val
         self.test_dataset = test
