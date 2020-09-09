@@ -41,8 +41,8 @@ class CIFAR100DataModule(LightningDataModule):
             transform=self.test_transforms_conf,
         )
         split_sizes = [
-            len(train) * self.train_dataset_size,
-            len(train) * (1 - self.train_dataset_size),
+            int(len(train) * self.train_dataset_size),
+            int(len(train) * (1 - self.train_dataset_size)),
         ]
         train, val = random_split(train, split_sizes)
         self.train_dataset = train
