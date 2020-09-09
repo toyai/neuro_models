@@ -24,6 +24,7 @@ class CIFAR100DataModule(LightningDataModule):
         super().__init__()
         self.train_transforms_conf = train_transforms_conf
         self.test_transforms_conf = test_transforms_conf
+        self.train_dataset_size = train_dataset_size
         self.train_dataloader_conf = train_dataloader_conf or OmegaConf.create()
         self.val_dataloader_conf = val_dataloader_conf or OmegaConf.create()
 
