@@ -17,10 +17,10 @@ from scripts.densenets.run import main as densenets_main
 )
 @settings(deadline=None)
 @given(pretrained=booleans())
-def test_densenet121(name, dm, num_classes, pretrained):
+def test_densenet121(name, dm, num_classes):
     with initialize_config_dir(os.getcwd() + "/conf"):
         cfg = compose(
-            config_name="densenet161",
+            config_name="densenets",
             overrides=[
                 f"name={name}",
                 f"dm={dm}",
