@@ -15,11 +15,13 @@ log = logging.getLogger(__name__)
 
 seed_everything(666)
 
+
 @hydra.main(config_path=os.getcwd() + "/conf", config_name="densenets")
 def main(cfg: DictConfig = None):
     log.info("Training Configs:\n%s", OmegaConf.to_yaml(cfg))
 
-    network = DenseNet(name=cfg.name, num_classes=cfg.num_classes, bn_size=cfg.bn_size, drop_rate=cfg.drop_rate)
+    network = DenseNet(name=cfg.name, num_classes=cfg.num_classes,
+                       bn_size=cfg.bn_size, drop_rate=cfg.drop_rate)
     gym = DenseNetLightning(network, cfg)
     transforms = T.Compose(
         [

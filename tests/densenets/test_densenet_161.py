@@ -2,8 +2,6 @@ import os
 
 import pytest
 from hydra.experimental import compose, initialize_config_dir
-from hypothesis import given, settings
-from hypothesis.strategies import booleans
 
 from scripts.densenets.run import main as densenets_main
 
@@ -15,7 +13,6 @@ from scripts.densenets.run import main as densenets_main
         pytest.param("densenet161", "cifar100", 100),
     ],
 )
-
 def test_densenet121(name, dm, num_classes):
     with initialize_config_dir(os.getcwd() + "/conf"):
         cfg = compose(
