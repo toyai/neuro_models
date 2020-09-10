@@ -7,7 +7,7 @@ from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 
-from lightningmodules.densenets.densenets_module import DenseNetLightning
+from lightningmodules.densenets import DenseNetLightning
 from models.densenets import DenseNet
 
 log = logging.getLogger(__name__)

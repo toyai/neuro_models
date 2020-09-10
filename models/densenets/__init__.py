@@ -1,3 +1,3 @@
-from models.densenets.model import DenseNet
+from models.densenets.densenets_model import DenseNet
 
 __all__ = ["DenseNet"]

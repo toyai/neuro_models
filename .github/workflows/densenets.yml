@@ -18,7 +18,6 @@ jobs:
             tests/densenets/test_densenet_161.py,
             tests/densenets/test_densenet_169.py,
             tests/densenets/test_densenet_201.py,
-            
           ]
     steps:
       - uses: actions/checkout@v2
