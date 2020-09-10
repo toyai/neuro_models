@@ -1,5 +1,5 @@
 # project name
-name: densenet
+name: densenet121
 defaults:
   - dm: cifar10 # for LightningDataModule
   - optim: sgd
