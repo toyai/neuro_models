@@ -74,14 +74,24 @@ class DenseNetLightning(pl.LightningModule):
         }
 
         return {
-            "train_loss": loss,
-            "train_top1": top1,
-            "train_top5": top5,
+            "loss": loss,
+            "top1": top1,
+            "top5": top5,
             "log": logs,
         }
 
     def training_epoch_end(self, outputs):
-        return {"log": self._epoch_end("train", outputs)}
+        avg_loss = torch.stack([x["loss"] for x in outputs]).mean()
+        avg_top1 = torch.stack([x["top1"] for x in outputs]).mean()
+        avg_top5 = torch.stack([x["top5"] for x in outputs]).mean()
+
+        logs = {
+            "epoch_train_loss": avg_loss,
+            "epoch_train_top1": avg_top1,
+            "epoch_train_top5": avg_top5,
+        }
+
+        return {"log": logs}
 
     def validation_step(self, batch, batch_idx):
         loss, top1, top5 = self._step(batch, batch_idx)
