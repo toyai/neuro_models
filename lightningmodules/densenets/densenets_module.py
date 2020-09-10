@@ -23,7 +23,7 @@ class DenseNetLightning(pl.LightningModule):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        acc = accuracy(pred, target)
 
         return {
             "loss": loss,
@@ -43,7 +43,7 @@ class DenseNetLightning(pl.LightningModule):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        acc = accuracy(pred, target)
 
         return {
             "val_loss": loss,
@@ -63,7 +63,7 @@ class DenseNetLightning(pl.LightningModule):
         img, target = batch
         pred = self(img)
         loss = F.cross_entropy(pred, target)
-        acc = accuracy(F.log_softmax(pred, dim=1), target)
+        acc = accuracy(pred, target)
 
         return {
             "test_loss": loss,
