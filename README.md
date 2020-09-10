@@ -3,3 +3,4 @@
 |     Model     |                                                                                           Fast Dev Run                                                                                            |
 | :-----------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | EfficientNets | [![EfficientNets](https://github.com/neurobytes/neuro_models/workflows/EfficientNets/badge.svg?branch=master)](https://github.com/neurobytes/neuro_models/actions?query=workflow%3AEfficientNets) |
+| DenseNets | [![DenseNets](https://github.com/neurobytes/neuro_models/workflows/DenseNets/badge.svg?branch=master)](https://github.com/neurobytes/neuro_models/actions?query=workflow%3ADenseNets) |
