@@ -4,7 +4,7 @@ codecov:
   strict_yaml_branch: "yaml-config"
   require_ci_to_pass: yes
   notify:
-    after_n_builds: 8
+    after_n_builds: 16
     wait_for_ci: yes
   # https://docs.codecov.io/docs/codecov-yaml#section-expired-reports
   max_report_age: off
@@ -18,7 +18,7 @@ coverage:
     project:
       default:
         against: auto
-        target: 99% # specify the target coverage for each commit status
+        target: 96% # specify the target coverage for each commit status
         threshold: 30% # allow this little decrease on project
         # https://github.com/codecov/support/wiki/Filtering-Branches
         # branches: master
