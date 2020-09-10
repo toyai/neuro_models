@@ -12,7 +12,6 @@ class EfficientNetGym(pl.LightningModule):
     def __init__(self, model: nn.Module, cfg: DictConfig):
         super().__init__()
         self.model = model
-        self.example_input_array = torch.rand(1, 3, 224, 224)
         self.hparams = cfg
 
     def forward(self, x):
