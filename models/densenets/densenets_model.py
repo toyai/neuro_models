@@ -16,6 +16,7 @@ compound_params_dict = {
     "densenet201": (32, (6, 12, 48, 32), 64)
 }
 
+
 class DenseNet(nn.Module):
     def __init__(
         self,
@@ -75,6 +76,7 @@ class DenseNet(nn.Module):
         out = self.classifer(out)
         return out
 
+
 class BottleNeck(nn.Module):
     def __init__(
         self,
@@ -112,7 +114,7 @@ class BottleNeck(nn.Module):
         return out
 
 
-class TransitionBlock(nn.Module):
+class TransitionBlock(nn.Sequential):
     """
         A building block of Transition Block
 
