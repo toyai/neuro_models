@@ -1,0 +1,26 @@
+# project name
+name: densenet121
+defaults:
+  - dm: cifar10 # for LightningDataModule
+  - optim: sgd
+
+# for logger, checkpoint and pretrain weights
+logger: true
+ckpt: true
+pretrained: false
+num_classes: 10
+bn_size: 4
+drop_rate: 0
+
+# .test() or not
+test: true
+
+# pl.Trainer configs
+pl:
+  max_epochs: 10
+  gpus: -1
+  fast_dev_run: false
+  overfit_batches: 0
+  limit_train_batches: 1.0
+  limit_val_batches: 1.0
+  limit_test_batches: 1.0
