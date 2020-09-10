@@ -6,6 +6,7 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
+from torchvision import transforms as T
 
 from lightningmodules.densenets import DenseNetLightning
 from models.densenets import DenseNet
