@@ -1,5 +1,5 @@
 from omegaconf import DictConfig
-
+from hydra.utils import instantiate
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
