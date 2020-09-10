@@ -17,12 +17,7 @@ class DenseNetLightning(pl.LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        optim = getattr(torch.optim, self.optimizers["type"])
-        return optim(
-            self.parameters(),
-            lr=self.hparams.lm.learning_rate,
-            weight_decay=self.hparams.lm.weight_decay
-        )
+        return instantiate(self.hparams.optim, **{"params": self.parameters()})
 
     def training_step(self, batch, _):
         img, target = batch
