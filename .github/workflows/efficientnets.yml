@@ -5,25 +5,12 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  schedule:
+    - cron: "0 0 1 * *"
 
 jobs:
   fast-dev-run:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        test-file:
-          [
-            tests/efficientnets/test_efficientnets_0.py,
-            tests/efficientnets/test_efficientnets_1.py,
-            tests/efficientnets/test_efficientnets_2.py,
-            tests/efficientnets/test_efficientnets_3.py,
-            tests/efficientnets/test_efficientnets_4.py,
-            tests/efficientnets/test_efficientnets_5.py,
-            tests/efficientnets/test_efficientnets_6.py,
-            tests/efficientnets/test_efficientnets_7.py,
-            tests/efficientnets/test_load_weights.py,
-          ]
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - name: Cache conda
@@ -56,7 +43,7 @@ jobs:
         run: |
           conda info
           conda list
-          python -m pytest datamodules datasets lightningmodules loggers models scripts utils ${{ matrix.test-file }} --hypothesis-show-statistics
+          python -m pytest datamodules datasets lightningmodules loggers models scripts utils tests/efficientnets/ --hypothesis-show-statistics
         shell: bash -l {0}
 
       - name: Codecov
