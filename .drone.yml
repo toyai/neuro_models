@@ -1,0 +1,19 @@
+kind: pipeline
+type: docker
+name: model-testing
+
+steps:
+- name: testing
+  image: python:3.7
+  commands:
+    - pip install pip wheel setuptools --upgrade
+    - pip install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+    - pip install pytest pytest-cov pytest-xdist wandb hydra-core pytorch-lightning hypothesis coverage
+    - python -m pytest datamodules datasets lightningmodules loggers models scripts utils tests --hypothesis-show-statistics
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
+    - pull_request
