@@ -5,12 +5,13 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  schedule:
+    - cron: "0 0 1 * *"
 
 jobs:
   fast-dev-run:
     if: |
-      github.event_name == 'pull_request' &&
-      github.event_name == 'push' &&
+      !github.event_name == 'pull_request' &&
       !contains(toJSON(github.event.commits), '[skip ci]') &&
       !contains(toJSON(github.event.commits), '[ci skip]')
     runs-on: ubuntu-latest
@@ -61,7 +62,7 @@ jobs:
         run: |
           conda info
           conda list
-          python -m pytest datamodules datasets lightningmodules loggers models scripts utils ${{ matrix.test-file }} --hypothesis-show-statistics
+          python -m pytest datamodules datasets lightningmodules loggers models scripts utils tests/efficientnets/ --hypothesis-show-statistics
         shell: bash -l {0}
 
       - name: Codecov
