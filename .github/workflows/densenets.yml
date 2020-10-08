@@ -52,7 +52,8 @@ jobs:
 
       - name: Tests
         run: |
-          echo ${{ toJSON(github) }}
+          echo ${{ toJSON(github.event.pull_request) }}
+          echo ${{ toJSON(github.event.pull_request.title) }}
           echo ${{ github.event_name == 'pull_request' }}
           echo ${{ ! (contains(toJSON(github.event.commits), '[skip ci]') || contains(toJSON(github.event.commits), '[ci skip]')) && github.event_name == 'pull_request' }}
           conda info
