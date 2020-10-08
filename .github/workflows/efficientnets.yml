@@ -11,8 +11,8 @@ on:
 jobs:
   fast-dev-run:
     if: |
-      !(contains(toJSON(github.event.commits), '[skip ci]') ||
-        contains(toJSON(github.event.commits), '[ci skip]')
+      !(contains(toJSON(github.event.pull_request.title), '[skip ci]') ||
+        contains(toJSON(github.event.pull_request.title), '[ci skip]')
       )
     runs-on: ubuntu-latest
     strategy:
