@@ -10,7 +10,27 @@ on:
 
 jobs:
   fast-dev-run:
-    runs-on: ubuntu-20.04
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event_name == 'push' &&
+      !contains(toJSON(github.event.commits), '[skip ci]') &&
+      !contains(toJSON(github.event.commits), '[ci skip]')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-file:
+          [
+            tests/efficientnets/test_efficientnets_0.py,
+            tests/efficientnets/test_efficientnets_1.py,
+            tests/efficientnets/test_efficientnets_2.py,
+            tests/efficientnets/test_efficientnets_3.py,
+            tests/efficientnets/test_efficientnets_4.py,
+            tests/efficientnets/test_efficientnets_5.py,
+            tests/efficientnets/test_efficientnets_6.py,
+            tests/efficientnets/test_efficientnets_7.py,
+            tests/efficientnets/test_load_weights.py,
+          ]
     steps:
       - uses: actions/checkout@v2
       - name: Cache conda

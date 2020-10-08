@@ -10,7 +10,22 @@ on:
 
 jobs:
   fast-dev-run:
-    runs-on: ubuntu-20.04
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event_name == 'push' &&
+      !contains(toJSON(github.event.commits), '[skip ci]') &&
+      !contains(toJSON(github.event.commits), '[ci skip]')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-file:
+          [
+            tests/densenets/test_densenet_121.py,
+            tests/densenets/test_densenet_161.py,
+            tests/densenets/test_densenet_169.py,
+            tests/densenets/test_densenet_201.py,
+          ]
     steps:
       - uses: actions/checkout@v2
       - name: Cache conda
