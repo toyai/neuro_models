@@ -8,6 +8,9 @@ on:
 
 jobs:
   fast-dev-run:
+    if: |
+      !contains(toJSON(github.event.commits), '[skip ci]') &&
+      !contains(toJSON(github.event.commits), '[ci skip]')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
