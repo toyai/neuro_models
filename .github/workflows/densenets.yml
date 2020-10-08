@@ -55,6 +55,7 @@ jobs:
 
       - name: Tests
         run: |
+          echo ${{ github.event_name }}
           echo ${{ contains(toJSON(github.event.commits), '[skip ci]') || contains(toJSON(github.event.commits), '[ci skip]') }}
           conda info
           conda list
