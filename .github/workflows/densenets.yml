@@ -10,10 +10,7 @@ on:
 
 jobs:
   fast-dev-run:
-    if: |
-      !(contains(toJSON(github.event.commits), '[skip ci]') ||
-        contains(toJSON(github.event.commits), '[ci skip]')) &&
-        github.event_name == 'pull_request'
+    if: ! contains(toJSON(github.event.commits), '[ci skip]')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -55,10 +52,10 @@ jobs:
 
       - name: Tests
         run: |
-          echo ${{ !contains(toJSON(github.event.commits), '[skip ci]') }}
-          echo ${{ !contains(toJSON(github.event.commits), '[ci skip]') }}
+          echo ${{ contains(toJSON(github.event.commits), '[skip ci]') }}
+          echo ${{ contains(toJSON(github.event.commits), '[ci skip]') }}
           echo ${{ github.event_name == 'pull_request' }}
-          echo ${{ !(contains(toJSON(github.event.commits), '[skip ci]') || contains(toJSON(github.event.commits), '[ci skip]')) && github.event_name == 'pull_request' }}
+          echo ${{ ! (contains(toJSON(github.event.commits), '[skip ci]') || contains(toJSON(github.event.commits), '[ci skip]')) && github.event_name == 'pull_request' }}
           conda info
           conda list
           python -m pytest datamodules datasets lightningmodules loggers models scripts utils tests/densenets/ --hypothesis-show-statistics
