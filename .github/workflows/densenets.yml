@@ -10,7 +10,7 @@ on:
 
 jobs:
   fast-dev-run:
-    if: ! contains(toJSON(github.event.commits), '[ci skip]')
+    if: "! contains(toJSON(github.event.commits), '[ci skip]')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
